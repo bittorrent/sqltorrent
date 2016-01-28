@@ -94,7 +94,7 @@ int vfs_read(sqlite3_file* file, void* buffer, int iAmt, sqlite3_int64 iOfst)
 
 	torrent_vfs_file* f = (torrent_vfs_file*)file;
 	int const piece_size = vfs_sector_size(file);
-	sqlite3_int64 piece_idx = iOfst / piece_size;
+	int piece_idx = int(iOfst / piece_size);
 	int piece_offset = iOfst % piece_size;
 	int residue = iAmt;
 	std::uint8_t* b = (std::uint8_t*)buffer;
