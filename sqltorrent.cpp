@@ -4,7 +4,6 @@ SQLITE_EXTENSION_INIT1
 
 #define BOOST_ASIO_SEPARATE_COMPILATION
 #include <cassert>
-#include <chrono>
 #include <libtorrent/session.hpp>
 #include <libtorrent/alert_types.hpp>
 
@@ -92,8 +91,6 @@ int vfs_device_characteristics(sqlite3_file*)
 int vfs_read(sqlite3_file* file, void* buffer, int iAmt, sqlite3_int64 iOfst)
 {
 	using namespace libtorrent;
-	using std::chrono::duration_cast;
-	using std::chrono::steady_clock;
 
 	torrent_vfs_file* f = (torrent_vfs_file*)file;
 	int const piece_size = vfs_sector_size(file);
