@@ -229,17 +229,11 @@ int torrent_vfs_access(sqlite3_vfs* vfs, const char *zName, int flags, int *pRes
 
 extern "C" {
 
-#ifdef _WIN32
+#if defined(_WIN32) && !defined(SQLITE_CORE)
 __declspec(dllexport)
 #endif
-int sqlite3_sqltorrent_init(
-	sqlite3 *db,
-	char **pzErrMsg,
-	const sqlite3_api_routines *pApi)
+int sqltorrent_init(int make_default)
 {
-	int rc = SQLITE_OK;
-	SQLITE_EXTENSION_INIT2(pApi);
-
 	static context ctx;
 	static sqlite3_vfs vfs;
 	if (!ctx.base)
@@ -253,7 +247,23 @@ int sqlite3_sqltorrent_init(
 		vfs.xAccess = torrent_vfs_access;
 	}
 
-	sqlite3_vfs_register(&vfs, 1);
+	sqlite3_vfs_register(&vfs, make_default);
+
+	return SQLITE_OK;
+}
+
+#if defined(_WIN32) && !defined(SQLITE_CORE)
+__declspec(dllexport)
+#endif
+int sqlite3_sqltorrent_init(
+	sqlite3 *db,
+	char **pzErrMsg,
+	const sqlite3_api_routines *pApi)
+{
+	int rc = SQLITE_OK;
+	SQLITE_EXTENSION_INIT2(pApi);
+
+	rc = sqltorrent_init(1);
 
 	return rc;
 }
