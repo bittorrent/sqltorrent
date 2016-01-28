@@ -104,19 +104,7 @@ int vfs_read(sqlite3_file* file, void* buffer, int iAmt, sqlite3_int64 iOfst)
 
 	do
 	{
-		if (!f->torrent.have_piece(piece_idx))
-		{
-			f->session->set_alert_mask(alert::category_t::progress_notification);
-			f->torrent.piece_priority(piece_idx, 7);
-			while (!f->torrent.have_piece(piece_idx))
-			{
-				f->session->wait_for_alert(seconds(10));
-				f->session->pop_alert();
-			}
-			f->session->set_alert_mask(0);
-		}
-
-		f->torrent.read_piece(piece_idx);
+		f->torrent.set_piece_deadline(piece_idx, 0, torrent_handle::alert_when_available);
 
 		for (;;)
 		{
