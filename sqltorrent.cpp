@@ -22,6 +22,8 @@ SQLITE_EXTENSION_INIT1
 #include <cassert>
 #include <libtorrent/session.hpp>
 #include <libtorrent/alert_types.hpp>
+#include <libtorrent/torrent_info.hpp>
+#include <libtorrent/version.hpp>
 
 namespace {
 
@@ -202,7 +204,11 @@ int torrent_vfs_open(sqlite3_vfs* vfs, const char *zName, sqlite3_file* file, in
 	add_torrent_params p;
 	p.save_path = ".";
 	error_code ec;
+#if LIBTORRENT_VERSION_NUM < 10100
 	p.ti = new torrent_info(zName, ec);
+#else
+	p.ti = boost::make_shared<torrent_info>(zName, ec);
+#endif
 	assert(!ec);
 	try {
 		f->torrent = ctx->session.add_torrent(p);
