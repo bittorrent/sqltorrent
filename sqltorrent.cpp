@@ -106,7 +106,7 @@ int vfs_device_characteristics(sqlite3_file*)
 	return SQLITE_IOCAP_IMMUTABLE;
 }
 
-int vfs_read(sqlite3_file* file, void* buffer, int iAmt, sqlite3_int64 iOfst)
+int vfs_read(sqlite3_file* file, void* buffer, int const iAmt, sqlite3_int64 const iOfst)
 {
 	using namespace libtorrent;
 
@@ -150,6 +150,7 @@ int vfs_read(sqlite3_file* file, void* buffer, int iAmt, sqlite3_int64 iOfst)
 			break;
 		}
 
+		++piece_idx;
 		piece_offset = 0;
 	} while (residue > 0);
 
